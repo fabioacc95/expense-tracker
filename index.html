@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expense Tracker V3</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#8e8e93;--line:#e5e5ea;--blue:#007AFF;--input:#fff;--nav:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:#38383a;--input:#2c2c2e;--nav:#1c1c1e}}
+:root[data-theme=light]{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#8e8e93;--line:#e5e5ea;--input:#fff;--nav:#fff}
+:root[data-theme=dark]{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:#38383a;--input:#2c2c2e;--nav:#1c1c1e}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:980px;margin:auto;min-height:100vh;padding:24px 18px 110px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}h1{font-size:24px;margin:0}.date{font-size:14px;color:var(--muted)}
+.home{min-height:58vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+.add-btn{border:0;border-radius:999px;background:#007AFF;color:#fff;padding:18px 34px;font-size:22px;font-weight:700;cursor:pointer;box-shadow:0 10px 25px #007aff35}
+.spent{text-align:center}.spent-label{font-size:13px;color:var(--muted)}.spent-value{font-size:22px;color:var(--muted);margin-top:3px}
+nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:min(700px,calc(100% - 28px));background:var(--nav);border:1px solid var(--line);border-radius:22px;padding:8px;display:flex;gap:4px;box-shadow:0 8px 30px #0002;z-index:10}
+nav button{flex:1;border:0;background:transparent;padding:12px 8px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:13px}nav button.active{background:#8882;color:var(--text);font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric strong{font-size:24px;display:block;margin-top:6px}.metric span{font-size:13px;color:var(--muted)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line)}th{font-size:13px;color:var(--muted)}
+.form{max-width:620px;margin:auto}.field{margin:14px 0}.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;font-size:16px;background:var(--input);color:var(--text)}.save{width:100%;border:0;border-radius:14px;padding:15px;background:#007AFF;color:#fff;font-size:16px;font-weight:700}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.muted,.settings-note{color:var(--muted)}.empty{text-align:center;padding:50px}
+.settings-section{padding:18px 0;border-top:1px solid var(--line)}.settings-section:first-of-type{border-top:0}.appearance-options{display:flex;gap:8px;margin-top:12px}
+.appearance-options button{flex:1;padding:12px;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:12px;cursor:pointer}.appearance-options button.selected{border-color:#007AFF;color:#007AFF;font-weight:700}
+.settings-action{width:100%;padding:13px;margin-top:8px;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:12px;text-align:left;cursor:pointer;font-size:15px}input[type=file]{display:none}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.app{padding-top:18px}.add-btn{font-size:20px;padding:16px 28px}}
+</style>
+</head>
+<body><div id="root"></div>
+<script>
+const categories={"Animais":["Brinquedos","Consultas","Medicação","Ração","Outro"],"Carro":["Inspeção","Limpeza","Manutenção","Peças","Reparação","Seguro","Selo","Outro"],"Casa":["Condomínio","Decoração","Eletrodomésticos","Mobiliário","Reparações","Seguros","Outro"],"Empréstimos":["Apartamento","Carro","Cartão de Crédito"],"Gasóleo":[],"Restauração":["Almoço","Café","Cerveja","Jantar","Lanche","Whisky","Outro"],"Roupa":[],"Saúde":["Consulta Médica","Medicação","Outro"],"Supermercado":[],"Transportes":[],"Outros":[]};
+let expenses=JSON.parse(localStorage.getItem("expenses_v3")||"[]"),page="home",theme=localStorage.getItem("theme_v3")||"system";
+function applyTheme(){if(theme==="system")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",theme)}applyTheme();
+const euro=n=>new Intl.NumberFormat("pt-PT",{style:"currency",currency:"EUR"}).format(n),today=()=>new Date().toISOString().slice(0,10);
+function dateLabel(){const d=new Date(),m=d.toLocaleDateString("en-US",{month:"long"});return m[0].toUpperCase()+m.slice(1)+" "+d.getDate()+", "+d.getFullYear()}
+function save(){localStorage.setItem("expenses_v3",JSON.stringify(expenses))}
+function month(){return expenses.filter(e=>e.date.startsWith(new Date().toISOString().slice(0,7)))}
+function nav(){return '<nav><button class="'+(page==="home"?"active":"")+'" data-page="home">🏡<br>Home</button><button class="'+(page==="expenses"?"active":"")+'" data-page="expenses">💰<br>Expenses</button><button class="'+(page==="analysis"?"active":"")+'" data-page="analysis">📊<br>Analysis</button><button class="'+(page==="settings"?"active":"")+'" data-page="settings">⚙️<br>Settings</button></nav>'}
+function home(){return '<section class="home"><button class="add-btn" data-page="add">+ Add expense</button><div class="spent"><div class="spent-label">spent so far</div><div class="spent-value">'+euro(month().reduce((s,e)=>s+e.value,0))+'</div></div></section>'}
+function add(){return '<section class="card form"><h2>Add expense</h2><div class="field"><label>Amount</label><input id="value" type="number" inputmode="decimal" step="0.01" min="0" autofocus placeholder="0.00"></div><div class="field"><label>Category</label><select id="cat"><option value="">Select category</option>'+Object.keys(categories).map(c=>'<option>'+c+'</option>').join("")+'</select></div><div class="field" id="subwrap" style="display:none"><label>Subcategory</label><select id="sub"><option value="">Select subcategory</option></select></div><div class="field"><label>Date</label><input id="date" type="date" value="'+today()+'"></div><div class="field"><label>Notes (optional)</label><textarea id="notes" rows="3" placeholder="Notes"></textarea></div><button class="save" id="save">Save expense</button></section>'}
+function list(){let a=[...expenses].sort((x,y)=>y.date.localeCompare(x.date));if(!a.length)return '<section class="card empty">No expenses recorded yet.</section>';return '<section class="card"><div class="row"><h2>Expenses</h2><strong>'+euro(expenses.reduce((s,e)=>s+e.value,0))+'</strong></div><table><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th></th></tr></thead><tbody>'+a.map(e=>'<tr><td>'+new Date(e.date+"T12:00").toLocaleDateString("en-GB")+'</td><td>'+e.category+(e.sub?" / "+e.sub:"")+'</td><td>'+euro(e.value)+'</td><td><button class="delete" data-id="'+e.id+'">✕</button></td></tr>').join("")+'</tbody></table></section>'}
+function analysis(){let a=month(),t=a.reduce((s,e)=>s+e.value,0),b={};a.forEach(e=>b[e.category]=(b[e.category]||0)+e.value);return '<section class="card"><h2>Analysis — '+dateLabel()+'</h2><div class="grid"><div class="metric"><span>Total spent</span><strong>'+euro(t)+'</strong></div><div class="metric"><span>Expenses</span><strong>'+a.length+'</strong></div><div class="metric"><span>Daily average</span><strong>'+euro(t/new Date().getDate())+'</strong></div><div class="metric"><span>Average/expense</span><strong>'+euro(a.length?t/a.length:0)+'</strong></div></div></section><section class="card"><h3>Spending by category</h3><table><thead><tr><th>Category</th><th>Total</th><th>%</th></tr></thead><tbody>'+Object.entries(b).sort((x,y)=>y[1]-x[1]).map(([c,v])=>'<tr><td>'+c+'</td><td>'+euro(v)+'</td><td>'+((t?v/t*100:0).toFixed(1))+'%</td></tr>').join("")+'</tbody></table></section>'}
+function settings(){return '<section class="card"><h2>Settings</h2><div class="settings-section"><h3>Appearance</h3><div class="settings-note">Choose how the app should look.</div><div class="appearance-options"><button class="'+(theme==="system"?"selected":"")+'" data-theme="system">Automatic</button><button class="'+(theme==="light"?"selected":"")+'" data-theme="light">Light</button><button class="'+(theme==="dark"?"selected":"")+'" data-theme="dark">Dark</button></div></div><div class="settings-section"><h3>Data</h3><div class="settings-note">Keep a backup of your expenses or restore them on a new iPhone.</div><button class="settings-action" id="exportBackup">Export backup</button><button class="settings-action" id="importBackup">Import backup</button><button class="settings-action" id="exportCSV">Export CSV</button><input type="file" id="backupFile" accept=".json,application/json"></div></section>'}
+function download(name,data,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click()}
+function render(){document.getElementById("root").innerHTML='<div class="app"><header><h1>Expense Tracker</h1><span class="date">'+dateLabel()+'</span></header><main>'+(page==="home"?home():page==="add"?add():page==="expenses"?list():page==="analysis"?analysis():settings())+'</main>'+nav()+'</div>';bind()}
+function bind(){
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{page=b.dataset.page;render()});
+document.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>{theme=b.dataset.theme;localStorage.setItem("theme_v3",theme);applyTheme();render()});
+const cat=document.getElementById("cat");if(cat)cat.onchange=()=>{let o=categories[cat.value]||[];document.getElementById("subwrap").style.display=o.length?"block":"none";document.getElementById("sub").innerHTML='<option value="">Select subcategory</option>'+o.map(x=>'<option>'+x+'</option>').join("")};
+const saveBtn=document.getElementById("save");if(saveBtn)saveBtn.onclick=()=>{let v=parseFloat(document.getElementById("value").value);if(!v||!cat.value){alert("Enter an amount and select a category.");return}expenses.push({id:Date.now(),value:v,category:cat.value,sub:document.getElementById("sub")?.value||"",date:document.getElementById("date").value,notes:document.getElementById("notes").value});save();page="home";render()};
+document.querySelectorAll(".delete").forEach(b=>b.onclick=()=>{expenses=expenses.filter(e=>e.id!=b.dataset.id);save();render()});
+const eb=document.getElementById("exportBackup");if(eb)eb.onclick=()=>download("expense-tracker-backup.json",JSON.stringify({version:3,exportedAt:new Date().toISOString(),expenses},null,2),"application/json");
+const ib=document.getElementById("importBackup"),bf=document.getElementById("backupFile");if(ib)ib.onclick=()=>bf.click();if(bf)bf.onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.expenses))throw 0;expenses=d.expenses;save();alert("Backup imported successfully.");render()}catch{alert("Invalid backup file.")}};
+const csv=document.getElementById("exportCSV");if(csv)csv.onclick=()=>{let r=[["Date","Category","Subcategory","Amount","Notes"],...expenses.map(e=>[e.date,e.category,e.sub||"",e.value,e.notes||""])];download("expense-tracker.csv",r.map(x=>x.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8")};
+}
+render();
+</script>
+</body>
+</html>
