@@ -12,7 +12,7 @@
 :root[data-theme=light]{--bg:#f5f5f7;--card:#fff;--text:#111;--muted:#8e8e93;--line:#e5e5ea;--input:#fff;--nav:#fff}
 :root[data-theme=dark]{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:#38383a;--input:#2c2c2e;--nav:#1c1c1e}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-.app{max-width:980px;margin:auto;min-height:100vh;padding:24px 18px 110px;display:flex;flex-direction:column}
+.app{max-width:980px;margin:auto;min-height:100vh;padding:24px 14px 110px;display:flex;flex-direction:column}
 header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}h1{font-size:24px;margin:0}.date{font-size:14px;color:var(--muted)}
 
 .home{flex:1;display:flex;flex-direction:column;justify-content:space-between;align-items:center;min-height:calc(100vh - 200px);padding:10px 0}
@@ -27,22 +27,31 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 
 nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:min(700px,calc(100% - 28px));background:var(--nav);border:1px solid var(--line);border-radius:22px;padding:8px;display:flex;gap:4px;box-shadow:0 8px 30px #0002;z-index:10}
 nav button{flex:1;border:0;background:transparent;padding:12px 8px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:13px}nav button.active{background:#8882;color:var(--text);font-weight:700}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric strong{font-size:22px;display:block;margin-top:6px}.metric span{font-size:13px;color:var(--muted)}
-table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line)}th{font-size:13px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric strong{font-size:17px;display:block;margin-top:4px;word-break:break-word}.metric span{font-size:12px;color:var(--muted)}
+
+/* TABLE & MOBILITY FIXES */
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{text-align:left;padding:10px 4px;border-bottom:1px solid var(--line);font-size:13px;word-break:break-word;white-space:normal}
+th{color:var(--muted);font-weight:600}
+th:nth-child(1), td:nth-child(1){width:24%}
+th:nth-child(2), td:nth-child(2){width:42%}
+th:nth-child(3), td:nth-child(3){width:20%;text-align:right}
+th:nth-child(4), td:nth-child(4){width:14%;text-align:right}
+
 .form{max-width:620px;margin:auto}.field{margin:14px 0}.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;font-size:16px;background:var(--input);color:var(--text);box-sizing:border-box}
 .save{width:100%;border:0;border-radius:14px;padding:15px;background:#007AFF;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.muted,.settings-note{color:var(--muted)}.empty{text-align:center;padding:50px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.muted,.settings-note{color:var(--muted)}.empty{text-align:center;padding:50px}
 .settings-section{padding:18px 0;border-top:1px solid var(--line)}.settings-section:first-of-type{border-top:0}.appearance-options{display:flex;gap:8px;margin-top:12px}
 .appearance-options button{flex:1;padding:12px;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:12px;cursor:pointer}.appearance-options button.selected{border-color:#007AFF;color:#007AFF;font-weight:700}
 .settings-action{width:100%;padding:13px;margin-top:8px;border:1px solid var(--line);background:var(--input);color:var(--text);border-radius:12px;text-align:left;cursor:pointer;font-size:15px}input[type=file]{display:none}
-.btn-icon{background:none;border:none;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px}
+.btn-icon{background:none;border:none;cursor:pointer;font-size:14px;padding:4px 2px}
 .chart-container{margin-top:16px;margin-bottom:16px;position:relative}
 .bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:13px}
-.bar-label{width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
-.bar-track{flex:1;background:var(--line);height:14px;border-radius:7px;margin:0 10px;overflow:hidden}
-.bar-fill{background:#007AFF;height:100%;border-radius:7px}
-.bar-val{width:80px;text-align:right;font-weight:600}
-.cycle-select{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--input);color:var(--text);font-size:14px;margin-bottom:16px}
+.bar-label{width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.bar-track{flex:1;background:var(--line);height:12px;border-radius:6px;margin:0 8px;overflow:hidden}
+.bar-fill{background:#007AFF;height:100%;border-radius:6px}
+.bar-val{width:70px;text-align:right;font-weight:600;font-size:12px}
+.cycle-select{max-width:100%;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--input);color:var(--text);font-size:12px;margin-bottom:12px;text-overflow:ellipsis}
 @media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.app{padding-top:18px}.add-btn{font-size:20px;padding:16px 28px}}
 </style>
 </head>
@@ -145,7 +154,7 @@ function add(){
 function list(){
   let a=[...expenses].sort((x,y)=>y.date.localeCompare(x.date));
   if(!a.length)return '<section class="card empty">No expenses recorded yet.</section>';
-  return '<section class="card"><div class="row"><h2>Expenses</h2><strong>'+euro(expenses.reduce((s,e)=>s+e.value,0))+'</strong></div><table><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Actions</th></tr></thead><tbody>'+a.map(e=>'<tr><td>'+new Date(e.date+"T12:00").toLocaleDateString("en-GB")+'</td><td>'+e.category+(e.sub?" / "+e.sub:"")+'</td><td>'+euro(e.value)+'</td><td><button class="btn-icon edit" data-id="'+e.id+'">✏️</button><button class="btn-icon delete" data-id="'+e.id+'">✕</button></td></tr>').join("")+'</tbody></table></section>';
+  return '<section class="card"><div class="row"><h2>Expenses</h2><strong>'+euro(expenses.reduce((s,e)=>s+e.value,0))+'</strong></div><table><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th></th></tr></thead><tbody>'+a.map(e=>'<tr><td>'+new Date(e.date+"T12:00").toLocaleDateString("pt-PT",{day:"2-digit",month:"2-digit"})+'</td><td>'+e.category+(e.sub?" / "+e.sub:"")+'</td><td style="text-align:right;">'+euro(e.value)+'</td><td style="text-align:right;"><button class="btn-icon edit" data-id="'+e.id+'">✏️</button><button class="btn-icon delete" data-id="'+e.id+'">✕</button></td></tr>').join("")+'</tbody></table></section>';
 }
 
 function renderCategoryChart(catTotals, total) {
@@ -205,14 +214,13 @@ function analysis(){
   }
 
   return '<section class="card">' +
-           '<div class="row"><h2>Analysis</h2>' +
-             '<select id="cycleSelect" class="cycle-select">' +
-               '<option value="0" '+(selectedCycleOffset===0?'selected':'')+'>Current Cycle ('+label+')</option>' +
-               '<option value="-1" '+(selectedCycleOffset===-1?'selected':'')+'>Previous Cycle</option>' +
-               '<option value="-2" '+(selectedCycleOffset===-2?'selected':'')+'>2 Cycles Ago</option>' +
-               '<option value="-3" '+(selectedCycleOffset===-3?'selected':'')+'>3 Cycles Ago</option>' +
-             '</select>' +
-           '</div>' +
+           '<div class="row" style="margin-bottom:10px;"><h2>Analysis</h2></div>' +
+           '<select id="cycleSelect" class="cycle-select">' +
+             '<option value="0" '+(selectedCycleOffset===0?'selected':'')+'>Current ('+label+')</option>' +
+             '<option value="-1" '+(selectedCycleOffset===-1?'selected':'')+'>Previous Cycle</option>' +
+             '<option value="-2" '+(selectedCycleOffset===-2?'selected':'')+'>2 Cycles Ago</option>' +
+             '<option value="-3" '+(selectedCycleOffset===-3?'selected':'')+'>3 Cycles Ago</option>' +
+           '</select>' +
            '<div class="grid">' +
              '<div class="metric"><span>Total spent</span><strong>'+euro(t)+'</strong></div>' +
              '<div class="metric"><span>Expenses</span><strong>'+a.length+'</strong></div>' +
