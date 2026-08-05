@@ -15,7 +15,6 @@
 .app{max-width:980px;margin:auto;min-height:100vh;padding:24px 18px 110px;display:flex;flex-direction:column}
 header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}h1{font-size:24px;margin:0}.date{font-size:14px;color:var(--muted)}
 
-/* HOME SCREEN LAYOUT FIXES */
 .home{flex:1;display:flex;flex-direction:column;justify-content:space-between;align-items:center;min-height:calc(100vh - 200px);padding:10px 0}
 .home-center{display:flex;align-items:center;justify-content:center;flex:1;width:100%}
 .add-btn{border:0;border-radius:999px;background:#007AFF;color:#fff;padding:18px 34px;font-size:22px;font-weight:700;cursor:pointer;box-shadow:0 10px 25px #007aff35}
@@ -63,7 +62,7 @@ function isHoliday(date){
   return fixed.includes(`${m}-${d}`);
 }
 
-function getCutoffDate(year, monthIndex) {
+function getPayday(year, monthIndex) {
   let d = new Date(year, monthIndex, 25);
   while (d.getDay() === 0 || d.getDay() === 6 || isHoliday(d)) {
     d.setDate(d.getDate() - 1);
@@ -73,28 +72,28 @@ function getCutoffDate(year, monthIndex) {
 
 function getCycleRange(offset = 0) {
   const now = new Date();
-  let currentYear = now.getFullYear();
-  let currentMonth = now.getMonth(); 
+  let todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  let currentCutoff = getCutoffDate(currentYear, currentMonth);
-  let cycleMonthIndex = (now >= currentCutoff) ? currentMonth : currentMonth - 1;
+  let currentMonthPayday = getPayday(now.getFullYear(), now.getMonth());
 
-  cycleMonthIndex += offset;
+  let baseMonth = now.getMonth();
+  let baseYear = now.getFullYear();
 
-  let targetDateForStart = new Date(currentYear, cycleMonthIndex, 1);
-  let startYear = targetDateForStart.getFullYear();
-  let startMonth = targetDateForStart.getMonth();
-  let startDate = getCutoffDate(startYear, startMonth);
+  if (todayDate < currentMonthPayday) {
+    baseMonth -= 1;
+  }
 
-  let targetDateForEnd = new Date(startYear, startMonth + 1, 1);
-  let endYear = targetDateForEnd.getFullYear();
-  let endMonth = targetDateForEnd.getMonth();
-  let nextCutoff = getCutoffDate(endYear, endMonth);
-  
-  let endDate = new Date(nextCutoff);
+  baseMonth += offset;
+
+  let startDate = getPayday(baseYear, baseMonth);
+  let endDate = getPayday(baseYear, baseMonth + 1);
   endDate.setDate(endDate.getDate() - 1);
 
-  return { startDate, endDate, label: `${startDate.toLocaleDateString("pt-PT")} - ${endDate.toLocaleDateString("pt-PT")}` };
+  return { 
+    startDate, 
+    endDate, 
+    label: `${startDate.toLocaleDateString("pt-PT")} - ${endDate.toLocaleDateString("pt-PT")}` 
+  };
 }
 
 function getExpensesForCycle(offset = 0) {
